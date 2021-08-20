@@ -1,18 +1,35 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+import {ListMail, ViewMail, SendMail} from './screens';
+import {SCREEN} from './constants';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>App</Text>
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName={SCREEN.LIST_MAIL}>
+        <Stack.Screen
+          name={SCREEN.LIST_MAIL}
+          component={ListMail}
+          options={{
+            title: 'Inbox',
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name={SCREEN.VIEW_MAIL}
+          component={ViewMail}
+          options={{title: ''}}
+        />
+        <Stack.Screen
+          name={SCREEN.SEND_MAIL}
+          component={SendMail}
+          options={{title: ''}}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
