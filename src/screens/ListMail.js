@@ -71,13 +71,19 @@ export default function ListMail({navigation}) {
 
   const renderMailItem = ({item: mail}) => {
     return (
-      <Mail
-        key={mail.id}
-        from={mail.from}
-        subject={mail.subject}
-        content={mail.content}
-        date={mail.date}
-      />
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate(SCREEN.VIEW_MAIL, {mailId: mail.id})
+        }>
+        <Mail
+          key={mail.id}
+          read={mail.read}
+          from={mail.from}
+          subject={mail.subject}
+          content={mail.content}
+          date={mail.date}
+        />
+      </TouchableOpacity>
     );
   };
 
