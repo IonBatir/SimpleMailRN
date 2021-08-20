@@ -1,0 +1,5 @@
+export const SCREEN = {
+  LIST_MAIL: 'LIST_MAIL',
+  VIEW_MAIL: 'VIEW_MAIL',
+  SEND_MAIL: 'SEND_MAIL',
+};
