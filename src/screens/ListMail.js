@@ -47,8 +47,8 @@ export default function ListMail({navigation}) {
     () =>
       firestore()
         .collection('mails')
-        .onSnapshot({
-          next: querySnapshot => {
+        .onSnapshot(
+          querySnapshot => {
             const data = [];
             querySnapshot.forEach(doc => {
               const docData = doc.data();
@@ -60,24 +60,26 @@ export default function ListMail({navigation}) {
             });
             setMails({data, loading: false});
           },
-          error: error => {
+          error => {
             console.log(error);
             ErrorAlert();
             setMails({data: [], loading: false});
           },
-        }),
+        ),
     [],
   );
 
-  const renderMailItem = mail => (
-    <Mail
-      key={mail.id}
-      from={mail.from}
-      subject={mail.subject}
-      content={mail.content}
-      date={mail.date}
-    />
-  );
+  const renderMailItem = ({item: mail}) => {
+    return (
+      <Mail
+        key={mail.id}
+        from={mail.from}
+        subject={mail.subject}
+        content={mail.content}
+        date={mail.date}
+      />
+    );
+  };
 
   if (mails.loading) {
     return <Spinner />;
