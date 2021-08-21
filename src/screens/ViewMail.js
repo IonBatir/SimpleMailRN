@@ -3,6 +3,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
 import {COLOR, FONT_SIZE, SPACING} from '../theme';
+import {Spinner} from '../components';
 
 const avatars = [
   '\u{1F466}',
@@ -103,11 +104,11 @@ export default function ViewMail({route}) {
     });
   }, [mailId]);
 
-  return !mail ? (
-    <View>
-      <Text>No mail</Text>
-    </View>
-  ) : (
+  if (!mail) {
+    return <Spinner />;
+  }
+
+  return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.avatar}>
