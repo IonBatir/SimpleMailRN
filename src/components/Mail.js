@@ -3,7 +3,7 @@ import {StyleSheet, View, Text} from 'react-native';
 import {COLOR, FONT_SIZE, SPACING} from '../theme';
 
 const formatDate = date =>
-  date.toLocaleString('ro-RO', {
+  date?.toLocaleString('ro-RO', {
     day: 'numeric',
     month: 'short',
     hour: 'numeric',
