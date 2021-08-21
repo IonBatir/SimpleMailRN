@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Text,
   FlatList,
+  Alert,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
@@ -41,47 +42,73 @@ const styles = StyleSheet.create({
 });
 
 export default function ListMail({navigation}) {
+  const [mail, setMail] = React.useState('ionbatir@gmail.com');
   const [mails, setMails] = React.useState({data: [], loading: true});
 
-  React.useEffect(
-    () =>
-      firestore()
-        .collection('mails')
-        .onSnapshot(
-          querySnapshot => {
-            const data = [];
-            querySnapshot.forEach(doc => {
-              const docData = doc.data();
-              data.push({
-                id: doc.id,
-                ...docData,
-                date: docData.date?.toDate(),
-              });
-            });
-            setMails({data, loading: false});
-          },
-          error => {
-            console.log(error);
-            ErrorAlert();
-            setMails({data: [], loading: false});
-          },
-        ),
-    [],
-  );
+  React.useEffect(() => {
+    if (mail) {
+      return () => {};
+    }
+    Alert.prompt(
+      'Email',
+      'Enter your email',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: setMail(mail),
+        },
+      ],
+      'plain-text',
+    );
+  }, [mail]);
 
-  const renderMailItem = ({item: mail}) => {
+  React.useEffect(() => {
+    if (!mail) {
+      return () => {};
+    }
+    return firestore()
+      .collection('mails')
+      .where('to', '==', mail)
+      .orderBy('date', 'desc')
+      .onSnapshot(
+        querySnapshot => {
+          const data = [];
+          querySnapshot.forEach(doc => {
+            const docData = doc.data();
+            data.push({
+              id: doc.id,
+              ...docData,
+              date: docData.date?.toDate(),
+            });
+          });
+          setMails({data, loading: false});
+        },
+        error => {
+          console.log(error);
+          ErrorAlert();
+          setMails({data: [], loading: false});
+        },
+      );
+  }, [mail]);
+
+  const renderMailItem = ({item}) => {
     return (
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate(SCREEN.VIEW_MAIL, {mailId: mail.id})
+          navigation.navigate(SCREEN.VIEW_MAIL, {mailId: item.id})
         }>
         <Mail
-          key={mail.id}
-          read={mail.read}
-          from={mail.from}
-          subject={mail.subject}
-          content={mail.content}
-          date={mail.date}
+          key={item.id}
+          read={item.read}
+          from={item.from}
+          subject={item.subject}
+          content={item.content}
+          date={item.date}
         />
       </TouchableOpacity>
     );
@@ -95,7 +122,7 @@ export default function ListMail({navigation}) {
     <SafeAreaView style={styles.container}>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate(SCREEN.SEND_MAIL)}>
+        onPress={() => navigation.navigate(SCREEN.SEND_MAIL, {from: mail})}>
         <Text style={styles.buttonText}>＋</Text>
       </TouchableOpacity>
 
@@ -108,7 +135,7 @@ export default function ListMail({navigation}) {
           <FlatList
             data={mails.data}
             renderItem={renderMailItem}
-            keyExtractor={mail => mail.id}
+            keyExtractor={item => item.id}
           />
         </View>
       ) : (
